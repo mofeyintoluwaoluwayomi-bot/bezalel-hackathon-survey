@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
   <title>CrackdIT — The Bezalel Hackathon</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -10,7 +10,7 @@
   <style>
     :root {
       /* Background image wired to your new image (place in the same folder as index.html) */
-      --bg-image: url('./Adding_logo_to_goggles_916fbffd_2K.jpg');
+      --bg-image: url('./Futuristic_CrackdIT_Hackathon_Visionaries.png_5c0f0da5.jpg');
 
       /* Optional local/hosted font-face URL for Kayon Medium (e.g. url('./Kayon-Medium.woff2')) */
       --kayon-font-url: none;
@@ -60,6 +60,7 @@
 
     html, body {
       min-height: 100%;
+      min-height: 100dvh;
       width: 100%;
       overflow-x: hidden;
       font-family: var(--font-body);
@@ -69,6 +70,8 @@
       background-color: var(--black);
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
     }
 
     /* Full-bleed background image + fallback gradient */
@@ -134,12 +137,17 @@
     .viewport {
       position: relative;
       z-index: 3;
+      min-height: 100vh;
       min-height: 100dvh;
       width: 100%;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: clamp(16px, 4vw, 32px) 16px;
+      padding:
+        max(16px, env(safe-area-inset-top))
+        max(16px, env(safe-area-inset-right))
+        max(16px, env(safe-area-inset-bottom))
+        max(16px, env(safe-area-inset-left));
       pointer-events: none;
     }
 
@@ -148,8 +156,8 @@
       position: relative;
       pointer-events: auto;
       width: 100%;
-      max-width: 440px;
-      min-height: 620px;
+      max-width: clamp(320px, 92vw, 480px);
+      min-height: min(620px, calc(100dvh - 36px));
       background: var(--card-bg);
       backdrop-filter: blur(12px) saturate(135%);
       -webkit-backdrop-filter: blur(12px) saturate(135%);
@@ -165,6 +173,7 @@
       flex-direction: column;
       justify-content: space-between;
       overflow: hidden;
+      touch-action: manipulation;
       transition:
         opacity 0.26s cubic-bezier(0.22, 1, 0.36, 1),
         transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
@@ -178,8 +187,27 @@
 
     @media (min-width: 768px) {
       .glass-card {
+        max-width: 456px;
         backdrop-filter: blur(16px) saturate(140%);
         -webkit-backdrop-filter: blur(16px) saturate(140%);
+      }
+    }
+
+    @media (min-width: 1280px) {
+      .glass-card {
+        max-width: 472px;
+      }
+    }
+
+    @media (max-height: 640px) {
+      .glass-card {
+        min-height: auto;
+      }
+      .brand-bar {
+        margin-bottom: 18px;
+      }
+      .hero-footer {
+        padding-top: 20px;
       }
     }
 
@@ -1382,6 +1410,24 @@
       }
     };
 
+    function cloneDefaultState() {
+      return {
+        step: DEFAULT_STATE.step,
+        answers: {
+          name: DEFAULT_STATE.answers.name,
+          email: DEFAULT_STATE.answers.email,
+          units: [],
+          unitOther: DEFAULT_STATE.answers.unitOther,
+          problem: DEFAULT_STATE.answers.problem,
+          importance: DEFAULT_STATE.answers.importance,
+          tools: [],
+          toolsOther: DEFAULT_STATE.answers.toolsOther,
+          missing: DEFAULT_STATE.answers.missing,
+          participate: DEFAULT_STATE.answers.participate
+        }
+      };
+    }
+
     let state = loadState();
     let isSubmitting = false;
 
@@ -1396,35 +1442,51 @@
 
     function loadState() {
       try {
+        if (typeof localStorage === "undefined" || !localStorage) {
+          return cloneDefaultState();
+        }
         const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) return structuredClone(DEFAULT_STATE);
+        if (!raw) return cloneDefaultState();
         const parsed = JSON.parse(raw);
-        const rawAnswers = parsed.answers || {};
+        const rawAnswers = (parsed && typeof parsed.answers === "object" && parsed.answers) || {};
         const migratedUnits = Array.isArray(rawAnswers.units)
-          ? rawAnswers.units
-          : (rawAnswers.unit ? [rawAnswers.unit] : []);
+          ? rawAnswers.units.filter((item) => typeof item === "string")
+          : (typeof rawAnswers.unit === "string" && rawAnswers.unit ? [rawAnswers.unit] : []);
+        const migratedTools = Array.isArray(rawAnswers.tools)
+          ? rawAnswers.tools.filter((item) => typeof item === "string")
+          : [];
         return {
           step: typeof parsed.step === "number" && parsed.step >= 0 && parsed.step <= 8 ? parsed.step : 0,
           answers: {
             ...DEFAULT_STATE.answers,
             ...rawAnswers,
-            units: migratedUnits
+            name: typeof rawAnswers.name === "string" ? rawAnswers.name : "",
+            email: typeof rawAnswers.email === "string" ? rawAnswers.email : "",
+            units: migratedUnits,
+            unitOther: typeof rawAnswers.unitOther === "string" ? rawAnswers.unitOther : "",
+            problem: typeof rawAnswers.problem === "string" ? rawAnswers.problem : "",
+            importance: typeof rawAnswers.importance === "string" ? rawAnswers.importance : "",
+            tools: migratedTools,
+            toolsOther: typeof rawAnswers.toolsOther === "string" ? rawAnswers.toolsOther : "",
+            missing: typeof rawAnswers.missing === "string" ? rawAnswers.missing : "",
+            participate: typeof rawAnswers.participate === "string" ? rawAnswers.participate : ""
           }
         };
       } catch {
-        return structuredClone(DEFAULT_STATE);
+        return cloneDefaultState();
       }
     }
 
     function saveState() {
       try {
+        if (typeof localStorage === "undefined" || !localStorage) return;
         if (state.step === 9) {
           localStorage.removeItem(STORAGE_KEY);
         } else {
           localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
         }
       } catch {
-        // Ignore storage quota errors
+        // Ignore storage quota or private-browsing storage restrictions
       }
     }
 
@@ -1487,14 +1549,28 @@
     }
 
     function updateChrome() {
+      if (!cardEl || !headerEl) return;
       const inQuestions = state.step >= 1 && state.step <= 8;
       headerEl.classList.toggle("is-hidden", !inQuestions);
       cardEl.classList.toggle("thanks-card-mode", state.step === 9);
       if (inQuestions) {
         const pct = (state.step / 8) * 100;
-        progressFill.style.width = `${pct}%`;
-        progressText.textContent = `${state.step}/8`;
-        progressBar.setAttribute("aria-valuenow", String(state.step));
+        if (progressFill) progressFill.style.width = `${pct}%`;
+        if (progressText) progressText.textContent = `${state.step}/8`;
+        if (progressBar) progressBar.setAttribute("aria-valuenow", String(state.step));
+      }
+    }
+
+    function showError(message) {
+      const errEl = document.getElementById("stepError");
+      if (errEl) {
+        errEl.textContent = message;
+        errEl.classList.add("is-visible");
+      }
+      if (cardEl) {
+        cardEl.classList.remove("shake");
+        void cardEl.offsetWidth;
+        cardEl.classList.add("shake");
       }
     }
 
@@ -1664,7 +1740,7 @@
 
         isSubmitting = false;
         goToStep(9);
-      } catch (err) {
+      } catch {
         isSubmitting = false;
         if (submitBtn) {
           submitBtn.disabled = false;
@@ -1675,6 +1751,7 @@
     }
 
     function render() {
+      if (!stageEl) return;
       const a = state.answers;
       const hasSavedProgress = state.step === 0 && Boolean(a.name || a.email || (a.units && a.units.length) || a.problem);
 
@@ -1711,9 +1788,12 @@
         `;
 
         bindEcwaFallback();
-        document.getElementById("startBtn").addEventListener("click", () => {
-          goToStep(1);
-        });
+        const startBtn = document.getElementById("startBtn");
+        if (startBtn) {
+          startBtn.addEventListener("click", () => {
+            goToStep(1);
+          });
+        }
         return;
       }
 
@@ -2285,8 +2365,19 @@
           }
 
           try {
+            if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
+              await navigator.clipboard.writeText(window.location.href);
+              toast.textContent = "Link copied to clipboard";
+              return;
+            }
+          } catch {
+            // Fall back to execCommand below
+          }
+
+          try {
             const tempInput = document.createElement("textarea");
             tempInput.value = window.location.href;
+            tempInput.setAttribute("readonly", "");
             tempInput.style.position = "fixed";
             tempInput.style.opacity = "0";
             document.body.appendChild(tempInput);
@@ -2304,6 +2395,7 @@
     function bindTextInput(fieldKey, isTextarea) {
       const input = document.getElementById("fieldInput");
       const btn = document.getElementById("primaryActionBtn");
+      if (!input || !btn) return;
 
       input.addEventListener("input", () => {
         clearError();
@@ -2324,7 +2416,13 @@
       });
 
       btn.addEventListener("click", validateAndAdvance);
-      setTimeout(() => input.focus(), 40);
+      setTimeout(() => {
+        try {
+          input.focus({ preventScroll: true });
+        } catch {
+          input.focus();
+        }
+      }, 40);
     }
 
     function bindOtherInput(fieldKey) {
@@ -2344,17 +2442,21 @@
     }
 
     // Header navigation controls
-    backBtn.addEventListener("click", () => {
-      if (state.step > 1) {
-        goToStep(state.step - 1);
-      } else {
-        goToStep(0);
-      }
-    });
+    if (backBtn) {
+      backBtn.addEventListener("click", () => {
+        if (state.step > 1) {
+          goToStep(state.step - 1);
+        } else {
+          goToStep(0);
+        }
+      });
+    }
 
-    closeBtn.addEventListener("click", () => {
-      goToStep(0);
-    });
+    if (closeBtn) {
+      closeBtn.addEventListener("click", () => {
+        goToStep(0);
+      });
+    }
 
     // Global Enter support on choice-only steps (3, 5, 6, 8)
     document.addEventListener("keydown", (e) => {
@@ -2369,9 +2471,17 @@
 
     // Reveal the background image for just a brief moment (~180ms) before bringing in the card
     function revealCardAfterIntro() {
-      const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      let prefersReduced = false;
+      try {
+        prefersReduced = Boolean(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+      } catch {
+        prefersReduced = false;
+      }
       const introDuration = prefersReduced ? 0 : 180;
+      let revealed = false;
       const finishIntro = () => {
+        if (revealed) return;
+        revealed = true;
         document.body.classList.remove("is-intro-stage");
       };
       const timer = setTimeout(finishIntro, introDuration);
@@ -2380,11 +2490,22 @@
         clearTimeout(timer);
         finishIntro();
       }, { once: true });
+      // Safety fallback in case timers/events are delayed on constrained webviews
+      window.addEventListener("load", () => {
+        setTimeout(finishIntro, Math.max(introDuration, 250));
+      }, { once: true });
     }
 
-    // Boot
-    updateChrome();
-    render();
+    // Boot safely across all browsers and screen sizes
+    try {
+      updateChrome();
+      render();
+    } catch {
+      document.body.classList.remove("is-intro-stage");
+      if (stageEl) {
+        stageEl.innerHTML = `<div class="step-view"><p class="hero-sub">Unable to load view. Please refresh the page.</p></div>`;
+      }
+    }
     revealCardAfterIntro();
   </script>
 </body>
