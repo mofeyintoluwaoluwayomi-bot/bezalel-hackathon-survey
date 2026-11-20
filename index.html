@@ -9,8 +9,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet" />
   <style>
     :root {
-      /* Background image wired to your uploaded file (update path if hosted elsewhere) */
-      --bg-image: url('./Futuristic%20CrackdIT%20Hackathon%20Visionaries.png');
+      /* Background image wired to your new image (place in the same folder as index.html) */
+      --bg-image: url('./Adding_logo_to_goggles_916fbffd_2K.jpg');
 
       /* Optional local/hosted font-face URL for Kayon Medium (e.g. url('./Kayon-Medium.woff2')) */
       --kayon-font-url: none;
@@ -24,13 +24,13 @@
       --indigo-deep: #07192E;
 
       /* Glass surfaces tuned for crisp legibility over photo */
-      --card-bg: rgba(7, 18, 36, 0.56);
-      --card-border: rgba(245, 250, 254, 0.28);
-      --card-highlight: rgba(245, 250, 254, 0.22);
-      --pill-bg: rgba(4, 10, 22, 0.48);
-      --pill-hover: rgba(16, 42, 76, 0.62);
-      --pill-selected: rgba(4, 10, 22, 0.86);
-      --pill-border: rgba(245, 250, 254, 0.18);
+      --card-bg: rgba(7, 18, 36, 0.24);
+      --card-border: rgba(245, 250, 254, 0.34);
+      --card-highlight: rgba(245, 250, 254, 0.28);
+      --pill-bg: rgba(4, 10, 22, 0.26);
+      --pill-hover: rgba(16, 42, 76, 0.42);
+      --pill-selected: rgba(4, 10, 22, 0.72);
+      --pill-border: rgba(245, 250, 254, 0.24);
       --pill-border-active: #AFEB00;
 
       /* Typography */
@@ -83,15 +83,26 @@
         radial-gradient(80% 65% at 88% 85%, rgba(175, 235, 0, 0.28) 0%, transparent 62%),
         linear-gradient(158deg, #040B16 0%, #0D355C 52%, #061224 100%);
       background-size: cover;
-      background-position: center 42%;
+      background-position: center 34%;
       background-repeat: no-repeat;
-      filter: blur(4px);
-      transform: scale(1.03);
+      filter: blur(1.2px);
+      transform: scale(1.015);
+      transition: filter 0.28s cubic-bezier(0.22, 1, 0.36, 1), transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    /* During the opening scene reveal, show the background photo crisp and unblurred */
+    body.is-intro-stage .stage-bg {
+      filter: blur(0px);
+      transform: scale(1.05);
     }
 
     @media (min-width: 768px) {
       .stage-bg {
-        background-position: center 48%;
+        background-position: center 36%;
+        filter: blur(2.4px);
+      }
+      body.is-intro-stage .stage-bg {
+        filter: blur(0px);
       }
     }
 
@@ -100,16 +111,21 @@
       inset: 0;
       z-index: 1;
       background:
-        radial-gradient(circle at 50% 45%, rgba(4, 10, 22, 0.2) 0%, rgba(4, 10, 22, 0.54) 100%),
-        rgba(5, 14, 28, 0.3);
+        radial-gradient(circle at 50% 45%, rgba(4, 10, 22, 0.08) 0%, rgba(4, 10, 22, 0.34) 100%),
+        rgba(5, 14, 28, 0.14);
       pointer-events: none;
+      transition: opacity 0.28s ease;
+    }
+
+    body.is-intro-stage .stage-overlay {
+      opacity: 0.22;
     }
 
     .stage-grain {
       position: fixed;
       inset: 0;
       z-index: 2;
-      opacity: 0.045;
+      opacity: 0.04;
       pointer-events: none;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     }
@@ -124,29 +140,47 @@
       align-items: center;
       justify-content: center;
       padding: clamp(16px, 4vw, 32px) 16px;
+      pointer-events: none;
     }
 
     /* Tall, breathable frosted glass card inspired by reference layout */
     .glass-card {
       position: relative;
+      pointer-events: auto;
       width: 100%;
       max-width: 440px;
       min-height: 620px;
       background: var(--card-bg);
-      backdrop-filter: blur(34px) saturate(140%);
-      -webkit-backdrop-filter: blur(34px) saturate(140%);
+      backdrop-filter: blur(12px) saturate(135%);
+      -webkit-backdrop-filter: blur(12px) saturate(135%);
       border-radius: var(--radius-card);
       border: 1.5px solid var(--card-border);
       box-shadow:
-        0 32px 72px -12px rgba(0, 0, 0, 0.78),
-        0 0 0 1px rgba(245, 250, 254, 0.06),
+        0 32px 72px -12px rgba(0, 0, 0, 0.72),
+        0 0 0 1px rgba(245, 250, 254, 0.08),
         inset 0 1.5px 1px 0 var(--card-highlight),
-        inset 0 -1px 1px 0 rgba(0, 0, 0, 0.35);
+        inset 0 -1px 1px 0 rgba(0, 0, 0, 0.28);
       padding: 26px 26px 26px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       overflow: hidden;
+      transition:
+        opacity 0.26s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    body.is-intro-stage .glass-card {
+      opacity: 0;
+      transform: translateY(12px) scale(0.985);
+      pointer-events: none;
+    }
+
+    @media (min-width: 768px) {
+      .glass-card {
+        backdrop-filter: blur(16px) saturate(140%);
+        -webkit-backdrop-filter: blur(16px) saturate(140%);
+      }
     }
 
     @media (min-width: 420px) {
@@ -271,6 +305,9 @@
       .step-view {
         animation: none;
       }
+      .stage-bg,
+      .stage-overlay,
+      .glass-card,
       .progress-fill,
       .option-pill,
       .btn-primary,
@@ -339,6 +376,7 @@
 
     /* Straightened floating glass lens pill */
     .glass-lens {
+      position: relative;
       display: inline-flex;
       align-items: center;
       width: fit-content;
@@ -362,6 +400,7 @@
     }
 
     .hero-lens {
+      margin-top: 8px;
       margin-bottom: 18px;
       transform: none;
     }
@@ -470,7 +509,7 @@
       z-index: 2;
     }
 
-    /* Unique per-slide design rhythms within the brand palette (keep eyebrow/header anchored directly above heading) */
+    /* Unique per-slide design rhythms within the brand palette */
     .slide-cadence-step2 .question-head {
       margin-bottom: 18px;
     }
@@ -597,7 +636,7 @@
       animation: stepEnter 0.25s ease both;
     }
 
-    /* Option Rows & 2-Column Grid (clean typographic markers, no emojis) */
+    /* Option Rows & 2-Column Grid */
     .options-list {
       display: flex;
       flex-direction: column;
@@ -1173,177 +1212,6 @@
       display: block;
     }
 
-    .thanks-photo-fallback {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 20px;
-      text-align: center;
-      background: linear-gradient(145deg, #0E4A36 0%, #190F6F 100%);
-    }
-
-    .thanks-fallback-tag {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--lime);
-    }
-
-    .thanks-fallback-title {
-      font-family: var(--font-display);
-      font-weight: 800;
-      font-size: 22px;
-      color: var(--off-white);
-    }
-
-    .thanks-photo-scrim {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(
-        180deg,
-        rgba(4, 10, 22, 0.06) 0%,
-        rgba(4, 10, 22, 0.02) 55%,
-        rgba(4, 10, 22, 0.68) 100%
-      );
-      pointer-events: none;
-    }
-
-    .thanks-photo-pill {
-      position: absolute;
-      left: 14px;
-      bottom: 14px;
-      z-index: 2;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 13px;
-      border-radius: var(--radius-full);
-      background: rgba(4, 10, 22, 0.82);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(175, 235, 0, 0.55);
-      font-family: var(--font-mono);
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--lime);
-      opacity: 0;
-      transform: translateY(8px);
-      animation: copySlideIn 0.45s 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-    }
-
-    .thanks-tick-chip {
-      position: absolute;
-      right: 14px;
-      bottom: 14px;
-      z-index: 2;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: var(--black);
-      border: 1.5px solid var(--lime);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.55);
-      opacity: 0;
-      transform: scale(0.6);
-      animation: badgePop 0.4s 0.62s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-    }
-
-    .tick-svg path {
-      stroke: var(--lime);
-      stroke-width: 3;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-      fill: none;
-      stroke-dasharray: 42;
-      stroke-dashoffset: 42;
-      animation: drawTick 0.45s 0.75s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-    }
-
-    .thanks-message-block {
-      padding: 0 4px;
-      opacity: 0;
-      transform: translateY(18px);
-      animation: copySlideIn 0.6s 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-    }
-
-    .thanks-actions-reveal {
-      opacity: 0;
-      transform: translateY(12px);
-      animation: copySlideIn 0.5s 1.05s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-    }
-
-    @keyframes attendantFullReveal {
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-    }
-
-    @keyframes badgePop {
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-
-    @keyframes copySlideIn {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes drawTick {
-      to { stroke-dashoffset: 0; }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .thanks-photo-hero,
-      .thanks-photo-pill,
-      .thanks-tick-chip,
-      .thanks-message-block,
-      .thanks-actions-reveal {
-        animation: none;
-        opacity: 1;
-        transform: none;
-      }
-    }
-
-    .thanks-title {
-      font-family: var(--font-display);
-      font-weight: 800;
-      font-size: clamp(1.5rem, 5vw, 1.82rem);
-      line-height: 1.1;
-      letter-spacing: -0.03em;
-      color: var(--off-white);
-      margin-bottom: 5px;
-    }
-
-    .thanks-sub {
-      font-size: 14px;
-      line-height: 1.42;
-      color: rgba(245, 250, 254, 0.85);
-      margin-bottom: 8px;
-    }
-
-    .thanks-sub {
-      font-family: var(--font-subtext);
-      font-weight: 500;
-      font-size: 15px;
-      line-height: 1.45;
-      color: rgba(245, 250, 254, 0.85);
-      margin-bottom: 12px;
-    }
-
     .save-date-pill {
       display: inline-flex;
       align-items: center;
@@ -1395,7 +1263,7 @@
     }
   </style>
 </head>
-<body>
+<body class="is-intro-stage">
   <div class="stage-bg" aria-hidden="true"></div>
   <div class="stage-overlay" aria-hidden="true"></div>
   <div class="stage-grain" aria-hidden="true"></div>
@@ -1664,7 +1532,7 @@
         case 1: {
           const val = a.name.trim();
           if (!val) {
-            showError("Please enter your full name to continue.");
+            showError("Please enter your name to continue.");
             document.getElementById("fieldInput")?.focus();
             return;
           }
@@ -1730,7 +1598,6 @@
           break;
         }
         case 7: {
-          // Optional field
           a.missing = a.missing.trim();
           goToStep(8);
           break;
@@ -1749,7 +1616,6 @@
     async function submitSurvey() {
       if (isSubmitting) return;
 
-      // Honeypot check
       const hp = document.getElementById("hpWebsite");
       if (hp && hp.value.trim() !== "") {
         goToStep(9);
@@ -1781,7 +1647,6 @@
 
       try {
         if (!ENDPOINT) {
-          // Local preview mode when ENDPOINT is not yet configured
           await new Promise((r) => setTimeout(r, 650));
           isSubmitting = false;
           goToStep(9);
@@ -1832,7 +1697,7 @@
                 Engineering the <span class="accent-word">solutions</span> the Kingdom needs.
               </h1>
               <p class="hero-sub">
-                <strong>ECWA Wuse 2</strong> brings builders, designers, and believers together for <span class="sub-hackathon">The Bezalel Hackathon</span> to engineer tech solutions for pracrical church challenges.<span class="hero-prompt">What would you love built? Take the quick quiz.</span>
+                Something exciting is brewing at <strong>ECWA Wuse 2</strong>! We're bringing builders, designers, and believers together for <span class="sub-hackathon">The Bezalel Hackathon</span>, to engineer tech solutions for practical challenges and needs within our very own church community.<span class="hero-prompt">What would you love built? Take the quick quiz.</span>
               </p>
             </div>
 
@@ -1857,12 +1722,12 @@
           <div class="step-view slide-cadence-editorial">
             <div class="question-head">
               <h2 class="question-title">
-                What’s your <span class="heading-lens">full name</span> so we know who’s building?
+                What’s your <span class="heading-lens">name</span>? Glad you’re here.
               </h2>
             </div>
 
             <div class="field-group">
-              <label for="fieldInput" class="sr-only">Full name</label>
+              <label for="fieldInput" class="sr-only">Name</label>
               <input
                 type="text"
                 id="fieldInput"
@@ -2502,9 +2367,25 @@
       }
     });
 
+    // Reveal the background image for just a brief moment (~180ms) before bringing in the card
+    function revealCardAfterIntro() {
+      const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const introDuration = prefersReduced ? 0 : 180;
+      const finishIntro = () => {
+        document.body.classList.remove("is-intro-stage");
+      };
+      const timer = setTimeout(finishIntro, introDuration);
+      // Allow an early tap/click anywhere to bring the card in immediately
+      document.addEventListener("pointerdown", () => {
+        clearTimeout(timer);
+        finishIntro();
+      }, { once: true });
+    }
+
     // Boot
     updateChrome();
     render();
+    revealCardAfterIntro();
   </script>
 </body>
 </html>
